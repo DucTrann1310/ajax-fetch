@@ -1,0 +1,141 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "json-server",
+      "author": "typicode"
+    },
+    {
+      "id": 2,
+      "title": "json-server-2",
+      "author": "typicode"
+    },
+    {
+      "id": 3,
+      "title": "Cát Tường",
+      "author": "typicode"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "body": "some comment",
+      "postId": 1
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  },
+  "customers": [
+    {
+      "fullName": "Camilla Kaufman",
+      "email": "fewuzyny@mailinator.com",
+      "phone": "0734662806",
+      "address": "Aut distinctio A il",
+      "balance": 30000,
+      "deleted": 0,
+      "id": 1
+    },
+    {
+      "fullName": "Blaine Ferguson",
+      "email": "bupiryqiv@mailinator.com",
+      "phone": "0846111249",
+      "address": "Quia sint sint offic",
+      "balance": 0,
+      "deleted": 1,
+      "id": 2
+    },
+    {
+      "fullName": "Shay Ayers",
+      "email": "nipubezeg@mailinator.com",
+      "phone": "0246087344",
+      "address": "Consequatur sint in ",
+      "balance": 0,
+      "deleted": 1,
+      "id": 3
+    },
+    {
+      "fullName": "Ignacia Landry",
+      "email": "piqogeku@mailinator.com",
+      "phone": "0963922791",
+      "address": "Dolorem molestias in",
+      "balance": 0,
+      "deleted": 0,
+      "id": 4
+    },
+    {
+      "fullName": "Vivian Hodge",
+      "email": "xemagiloh@mailinator.com",
+      "phone": "0257955938",
+      "address": "Dolor et exercitatio",
+      "balance": 0,
+      "deleted": 0,
+      "id": 5
+    },
+    {
+      "fullName": "Vivian Hodge",
+      "email": "xemagiloh@mailinator.com",
+      "phone": "0257955938",
+      "address": "Dolor et exercitatio",
+      "balance": 0,
+      "deleted": 1,
+      "id": 6
+    },
+    {
+      "fullName": "Kevyn Mason",
+      "email": "qosegumup@mailinator.com",
+      "phone": "0713991416",
+      "address": "In dicta sit nulla a",
+      "balance": 0,
+      "deleted": 0,
+      "id": 7
+    },
+    {
+      "fullName": "Colt Nieves",
+      "email": "nafumepyqe@mailinator.com",
+      "phone": "0031191963",
+      "address": "Vel occaecat quia om",
+      "balance": 0,
+      "deleted": 1,
+      "id": 8
+    },
+    {
+      "fullName": "Cally Faulkner",
+      "email": "gymuqyzywa@mailinator.com",
+      "phone": "0763595676",
+      "address": "Magni similique mini",
+      "balance": 0,
+      "deleted": 0,
+      "id": 9
+    }
+  ],
+  "deposits": [
+    {
+      "idCustomer": "2",
+      "fullName": "Blaine Ferguson",
+      "balance": "0",
+      "transactionAmount": "10000",
+      "createAt": "2023-11-06T03:37:34.464Z",
+      "id": 1
+    }
+  ],
+  "withdraws": [
+    {
+      "idCustomer": "",
+      "fullName": "",
+      "balance": "",
+      "transactionAmount": "",
+      "createAt": "2023-11-06T03:38:19.717Z",
+      "id": 1
+    },
+    {
+      "idCustomer": "1",
+      "fullName": "Camilla Kaufman",
+      "balance": "30000",
+      "transactionAmount": "10000",
+      "createAt": "2023-11-06T03:39:22.155Z",
+      "id": 2
+    }
+  ],
+  "transfers": []
+}
