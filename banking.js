@@ -48,6 +48,15 @@ const getCustomer = async (customerId) => {
   return response;
 };
 
+const getRecipients = async (customerId) => {
+  const customers = await fetchAllPerson();
+  
+  const reciptents = customers.filter((reciptent) => {
+    return reciptent.id !== customerId && reciptent.deleted === 0;
+  });
+  return reciptents
+}
+
 const getReciptent = async (customerId) => {
 
   const response = await $.ajax({
@@ -282,7 +291,7 @@ btnBan.on("click", async () => {
     customer
   }
 
-  btnBan.prop("disable", true);
+  btnBan.prop("disabled", true);
   loading.removeClass("hide");
 
   setTimeout(() => {
@@ -387,7 +396,7 @@ const depositCustomer = async () => {
     transactionAmount
   }
 
-  btnDeposit.prop("disable", true);
+  btnDeposit.prop("disabled", true);
   loading.removeClass("hide");
 
   setTimeout(() => {
@@ -454,7 +463,7 @@ const updateCustomer = () => {
     address
   }
 
-  btnUpdate.prop("disable", true);
+  btnUpdate.prop("disabled", true);
   loading.removeClass("hide");
 
   setTimeout(() => {
@@ -592,7 +601,6 @@ function attachEventHandle() {
 
     $(item).on("click", async () => {
 
-      // const customerId = item.getAttribute("data-id");
       customerId = $(item).data("id");
       customer = await getCustomer(customerId);
       openModal("modalUpdate");
