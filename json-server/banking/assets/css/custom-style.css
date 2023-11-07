@@ -17,6 +17,10 @@ table thead tr th {
     color: #fff !important;
 }
 
+.hide {
+    display: none;
+}
+
 footer {
     padding: 10px 0;
     position: fixed;
@@ -41,4 +45,12 @@ footer.error {
 
 .notification p.error {
     color: #b05965;
+}
+
+label.error {
+    color: #cf0000;
+}
+
+input.error {
+    border: solid 1px #cf0000;
 }

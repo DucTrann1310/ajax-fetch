@@ -1,22 +1,27 @@
-const bodyCustomer = document.getElementById("bodyCustomer");
-const btnCreate = document.getElementById("btnCreate");
-const btnUpdate = document.getElementById("btnUpdate")
-const btnDeposit = document.getElementById("btnDeposit")
-const btnWithdraw = document.getElementById("btnWithdraw");
-const btnBan = document.getElementById("btnBan");
-const reciptentSelect = document.getElementById("idRe");
+const bodyCustomer = $("#bodyCustomer");
+const btnCreate = $("#btnCreate");
+const btnUpdate = $("#btnUpdate")
+const btnDeposit = $("#btnDeposit")
+const btnWithdraw = $("#btnWithdraw");
+const btnBan = $("#btnBan");
+const reciptentSelect = $("#idRe");
+const loading = $("#loading");
 
-const toastLive = document.getElementById('liveToast')
-const toastBody = document.getElementById('toast-body')
-const btnCloseToast = document.getElementById('btnCloseToast')
+const toastLive = $("#liveToast")
+const toastBody = $("#toast-body")
+const btnCloseToast = $("#btnCloseToast")
 
 const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLive)
 
 let customerId = 0;
 async function fetchAllPerson() {
-  const response = await fetch("http://localhost:3300/customers");
-  const customers = await response.json();
-  return customers;
+  // const response = await fetch("http://localhost:3300/customers");
+  // const customers = await response.json();
+  // return customers;
+
+  return await $.ajax({
+    url: "http://localhost:3300/customers"
+  })
 }
 
 const getAllCustomers = async () => {
@@ -26,131 +31,43 @@ const getAllCustomers = async () => {
   console.log(customers);
 
   customers.forEach((item) => {
-    if(item.deleted == 0){
+    if (item.deleted == 0) {
       const str = renderCustomers(item);
-      bodyCustomer.innerHTML += str;
+      bodyCustomer.prepend(str);
     }
-
-
-    const btnEditElms = document.querySelectorAll(".edit");
-    const btnDepositElms = document.querySelectorAll(".deposit");
-    const btnWithdrawElms = document.querySelectorAll(".withdraw");
-    const btnBanElms = document.querySelectorAll(".ban");
-    const btnTransferElm = document.querySelectorAll(".transfer");
-
-    btnEditElms.forEach(item => {
-
-      item.addEventListener("click", async () => {
-
-        customerId = item.getAttribute("data-id");
-
-        const customer = await getCustomer(customerId);
-
-        openModal("modalUpdate");
-
-        document.getElementById("fullNameUp").value = customer.fullName;
-        document.getElementById("emailUp").value = customer.email;
-        document.getElementById("phoneUp").value = customer.phone;
-        document.getElementById("addressUp").value = customer.address;
-      })
-    })
-
-    btnDepositElms.forEach(item => {
-
-      item.addEventListener("click", async () => {
-
-        customerId = item.getAttribute("data-id")
-
-        const customer = await getCustomer(customerId);
-
-        openModal("modalDeposit");
-
-        document.getElementById("idDepo").value = customer.id;
-        document.getElementById("fullNameDepo").value = customer.fullName;
-        document.getElementById("balanceDepo").value = customer.balance;
-      })
-    });
-
-    btnWithdrawElms.forEach(item => {
-
-      item.addEventListener("click", async () => {
-
-        customerId = item.getAttribute("data-id");
-
-        const customer = await getCustomer(customerId);
-
-        openModal("modalWithdraw");
-
-        document.getElementById("idWi").value = customer.id;
-        document.getElementById("fullNameWi").value = customer.fullName;
-        document.getElementById("balanceWi").value = customer.balance;
-      })
-    })
-
-    btnBanElms.forEach(item => {
-
-      item.addEventListener("click", async() => {
-
-        customerId = item.getAttribute("data-id");
-
-        const customer = await getCustomer(customerId);
-  
-        openModal("modalBan");
-  
-        document.getElementById("fullNameBan").value = customer.fullName;
-        document.getElementById("emailBan").value = customer.email;
-        document.getElementById("phoneBan").value = customer.phone;
-        document.getElementById("addressBan").value = customer.address;
-      })
-
-    })
-
-    btnTransferElm.forEach(item => {
-
-      item.addEventListener("click", async() => {
-
-        customerId = item.getAttribute("data-id");
-
-        const sender = await getCustomer(customerId);
-        const reciptents = await getReciptent(customerId);
-
-        openModal("modalTransfer");
-
-        document.getElementById("idSen").value = sender.id;
-        document.getElementById("fullNameSe").value = sender.fullName;
-        document.getElementById("emailSe").value = sender.email;
-        document.getElementById("balanceSe").value = sender.balance;
-        reciptents.forEach(reciptent => {
-          const option = document.createElement("option");
-          option.value = reciptent.id;
-          option.textContent = reciptent.fullName;
-          reciptentSelect.appendChild(option);
-        })
-      })
-    })
+    attachEventHandle()
 
   });
 };
 
 const getCustomer = async (customerId) => {
 
-  const response = await fetch("http://localhost:3300/customers/" + customerId);
-  const customer = await response.json();
-  return customer
-}
+  const response = await $.ajax({
+
+    url: "http://localhost:3300/customers/" + customerId,
+    dataType: "json"
+  });
+
+  return response;
+};
 
 const getReciptent = async (customerId) => {
 
-  const response = await fetch("http://localhost:3300/customers/");
-  const customers = await response.json();
+  const response = await $.ajax({
+
+    url: "http://localhost:3300/customers/",
+    dataType: "json"
+  });
+
+  const customers = response;
 
   const reciptents = customers.filter((customer) => {
-    return customer.deleted == 0 && customer.id != customerId;
-  })
-  
-  return reciptents;
 
-}
+    return customer.deleted === 0 && customer.id !== customerId;
+  });
+
+  return reciptents;
+};
 
 
 const renderCustomers = (obj) => {
@@ -191,15 +108,365 @@ const renderCustomers = (obj) => {
 `;
 };
 
+
+$("#modalWithdraw").on('hidden.bs.modal', () => {
+  $("#frmWithdraw").trigger("reset")
+  $("#frmWithdraw input").removeClass("error")
+  $("#frmWithdraw label.error").remove()
+});
+
+$("#modalDeposit").on('hidden.bs.modal', () => {
+  $("#frmDeposit").trigger("reset")
+  $("#frmDeposit input").removeClass("error")
+  $("#frmDeposit label.error").remove()
+});
+
+$("#modalUpdate").on('hidden.bs.modal', () => {
+  $("#frmUpdate").trigger("reset")
+  $("#frmUpdate input").removeClass("error")
+  $("#frmUpdate label.error").remove()
+});
+
+$('#modalCreate').on('hidden.bs.modal', () => {
+  $('#frmCreate').trigger('reset')
+  $('#frmCreate input').removeClass('error')
+  $('#frmCreate label.error').remove()
+});
+
+
+
+$("#frmWithdraw").validate({
+  rules: {
+    transactionWi: {
+      required: true,
+      number: true,
+      max: function () {
+        return parseFloat($("#balanceWi").val());
+      }
+    }
+  },
+  message: {
+    transactionWi: {
+      required: "Vui lòng nhập tiền rút",
+      number: "Tiền rút phải là số",
+      max: "Tiền rút không được lớn hơn số tiền hiện có"
+    }
+  },
+  submitHandler: () => {
+    withdrawCustomer()
+  }
+})
+
+$("#frmDeposit").validate({
+  rules: {
+    transactionDepo: {
+      required: true,
+      number: true,
+      min: 1
+    }
+  },
+  message: {
+    transactionDepo: {
+      required: "Vui lòng nhập số tiền nộp",
+      number: "Tiền nộp vào phải là số",
+      min: "Tiền nộp vào phải là số dương và tối thiểu là 1"
+    }
+  },
+  submitHandler: () => {
+    depositCustomer()
+  }
+})
+
+$("#frmUpdate").validate({
+  rules: {
+    fullNameUp: {
+      required: true,
+      lettersOnly: true
+    },
+    emailUp: {
+      required: true,
+      email: true
+    },
+    phoneUp: {
+      required: true,
+      phoneNumber: true
+
+    },
+    addressUp: {
+      required: true,
+      minlength: 5
+    }
+  },
+  message: {
+    fullNameUp: {
+      required: "Vui lòng nhập tên",
+    },
+    emailUp: {
+      required: "Vui lòng nhập email",
+      email: "Vui lòng nhập địa chỉ email hợp lệ"
+    },
+    phoneUp: {
+      required: "Vui lòng nhập số điện thoại"
+    },
+    addressUp: {
+      required: "Vui lòng nhập địa chỉ",
+      minlength: "Tối thiểu 5 kí tự"
+    }
+  },
+  submitHandler: () => {
+    updateCustomer()
+  }
+})
+
+$("#frmCreate").validate({
+  rules: {
+    fullNameCre: {
+      required: true,
+      lettersOnly: true
+    },
+    emailCre: {
+      required: true,
+      email: true
+    },
+    phoneCre: {
+      required: true,
+      phoneNumber: true
+
+    },
+    addressCre: {
+      required: true,
+      minlength: 5
+    }
+  },
+  message: {
+    fullNameCre: {
+      required: "Vui lòng nhập tên",
+    },
+    emailCre: {
+      required: "Vui lòng nhập email",
+      email: "Vui lòng nhập địa chỉ email hợp lệ"
+    },
+    phoneCre: {
+      required: "Vui lòng nhập số điện thoại"
+    },
+    addressCre: {
+      required: "Vui lòng nhập địa chỉ",
+      minlength: "Tối thiểu 5 kí tự"
+    }
+  },
+  submitHandler: () => {
+    createCustomer()
+  }
+})
+
+
+
+$.validator.addMethod("lettersOnly", function (value, element) {
+  return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
+}, "Vui lòng chỉ nhập chữ cái.");
+
+$.validator.addMethod("phoneNumber", function (value, element) {
+  return this.optional(element) || /^0\d{9}$/.test(value);
+}, "Vui lòng nhập số điện thoại hợp lệ.");
+
+
+
 getAllCustomers();
 
-btnCreate.addEventListener("click", async () => {
-  const fullName = document.getElementById("fullNameCre").value;
-  const email = document.getElementById("emailCre").value;
-  const phone = document.getElementById("phoneCre").value;
-  const address = document.getElementById("addressCre").value;
-  const balance = 0;
-  const deleted = 0;
+
+
+
+const banCustomer = async () => {
+  const customer = await getCustomer(customerId);
+  customer.deleted = 1;
+
+  const obj = {
+    
+  }
+}
+
+const withdrawCustomer = async () => {
+  const customer = await getCustomer(customerId);
+  const transactionAmount = $("#transactionWi").val();
+
+  const obj = {
+    customer,
+    transactionAmount
+  }
+
+  btnWithdraw.prop("disable", true);
+  loading.removeClass("hide");
+
+  setTimeout(() => {
+    $.ajax(
+      {
+        url: "http://localhost:3300/withdraws/",
+        method: "POST",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        },
+        data: JSON.stringify(obj)
+      }
+    )
+    .done(() => {
+      customer.balance = customer.balance - parseFloat(obj.transactionAmount);
+
+      $.ajax(
+        {
+          headers: {
+            "Content-type": "application/json; charset=UTF-8"
+          },
+          url: "http://localhost:3300/customers/" + customerId,
+          method: "PATCH",
+          data: JSON.stringify(customer)
+        }
+      )
+      .done((data) => {
+        const str = renderCustomers(data);
+        const updateRow = $("#tr_" + customerId);
+        updateRow.replaceWith(str);
+        attachEventHandle()
+      })
+
+      closeModal("modalWithdraw")
+
+      toastBody.text('Rút tiền thành công')
+      toastBootstrap.show()
+
+      setTimeout(() => {
+        btnCloseToast.click
+      }, 1500);
+    })
+    .always(() => {
+      btnWithdraw.prop("disable", false)
+      loading.addClass("hide")
+      
+    })
+  }, 1000);
+}
+
+const depositCustomer = async () => {
+  const customer = await getCustomer(customerId);
+  const transactionAmount = $("#transactionDepo").val()
+
+  const obj = {
+    customer,
+    transactionAmount
+  }
+
+  btnDeposit.prop("disable", true);
+  loading.removeClass("hide");
+
+  setTimeout(() => {
+    $.ajax(
+      {
+        url: "http://localhost:3300/deposits/",
+        method: "POST",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        },
+        data: JSON.stringify(obj)
+      }
+    ).done(() => {
+      customer.balance = customer.balance + parseFloat(obj.transactionAmount);
+
+      $.ajax(
+        {
+          headers: {
+            "Content-type": "application/json; charset=UTF-8"
+          },
+          url: "http://localhost:3300/customers/" + customerId,
+          method: "PATCH",
+          data: JSON.stringify(customer)
+        }
+      )
+        .done((data) => {
+          const str = renderCustomers(data);
+          const updateRow = $("#tr_" + customerId);
+          updateRow.replaceWith(str);
+          attachEventHandle()
+        })
+
+      closeModal("modalDeposit");
+      
+
+      toastBody.text('Nạp tiền thành công')
+      toastBootstrap.show()
+
+      setTimeout(() => {
+        btnCloseToast.click
+      }, 1500);
+
+
+      
+    })
+      .always(() => {
+        btnDeposit.prop("disable", false)
+        loading.addClass("hide")
+        
+      })
+  }, 1000);
+}
+
+const updateCustomer = () => {
+  const fullName = $('#fullNameUp').val()
+  const email = $('#emailUp').val()
+  const phone = $('#phoneUp').val()
+  const address = $('#addressUp').val()
+
+  const obj = {
+    fullName,
+    email,
+    phone,
+    address
+  }
+
+  btnUpdate.prop("disable", true);
+  loading.removeClass("hide");
+
+  setTimeout(() => {
+    $.ajax(
+      {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        },
+        url: "http://localhost:3300/customers/" + customerId,
+        method: "PATCH",
+        data: JSON.stringify(obj)
+      }
+    )
+      .done((data) => {
+        const str = renderCustomers(data);
+        const updateRow = $("#tr_" + customerId);
+        updateRow.replaceWith(str);
+
+
+        closeModal("modalUpdate");
+
+        toastBody.text('Sửa thông tin thành công')
+        toastBootstrap.show()
+
+        setTimeout(() => {
+          btnCloseToast.click
+        }, 1500);
+
+        attachEventHandle()
+
+      })
+      .always(() => {
+        btnUpdate.prop("disable", false)
+        loading.addClass("hide")
+      })
+  }, 1000);
+}
+
+const createCustomer = () => {  
+  const fullName = $('#fullNameCre').val()
+  const email = $('#emailCre').val()
+  const phone = $('#phoneCre').val()
+  const address = $('#addressCre').val()
+  const balance = 0
+  const deleted = 0
 
   const obj = {
     fullName,
@@ -210,199 +477,167 @@ btnCreate.addEventListener("click", async () => {
     deleted
   }
 
-  const content = await fetchCreateCustomer(obj);
+  btnCreate.prop("disabled", true);
 
-  const str = renderCustomers(content);
-  bodyCustomer.innerHTML += str;
-
-  closeModal("modalCreate");
-
-  showSuccessToast("Tạo mới thành công")
-
-
-});
-
-btnUpdate.addEventListener("click", async () => {
-  const fullName = document.getElementById("fullNameUp").value;
-  const email = document.getElementById("emailUp").value;
-  const phone = document.getElementById("phoneUp").value;
-  const address = document.getElementById("addressUp").value;
-
-  const obj = {
-    fullName,
-    email,
-    phone,
-    address
-  }
-
-  const content = await fetchUpdateCustomer(customerId, obj);
-  updateRow(content);
-  closeModal("modalUpdate");
-
-  showSuccessToast("Cập nhật thông tin thành công")
-
-});
-
-btnDeposit.addEventListener("click", async () => {
-  const idCustomer = document.getElementById("idDepo").value;
-  const fullName = document.getElementById("fullNameDepo").value;
-  const balance = document.getElementById("balanceDepo").value;
-  const transactionAmount = document.getElementById("transactionDepo").value;
-  const createAt = new Date();
-
-  const obj = {
-    idCustomer,
-    fullName,
-    balance,
-    transactionAmount,
-    createAt
-  }
-
-  await fetchDepositCustomer(obj);
-  const content = await getCustomer(customerId);
-
-  incrementBalance(obj.transactionAmount, content);
-  updateRow(content);
-  closeModal("modalDeposit");
-  showSuccessToast("Nạp tiền thành công")
-
-});
-
-btnWithdraw.addEventListener("click", async() => {
-  const idCustomer = document.getElementById("idWi").value;
-  const fullName = document.getElementById("fullNameWi").value;
-  const balance = document.getElementById("balanceWi").value;
-  const transactionAmount = document.getElementById("transactionWi").value;
-  const createAt = new Date();
-
-  const obj = {
-    idCustomer,
-    fullName,
-    balance,
-    transactionAmount,
-    createAt
-  }
-
-  await fetchWithdrawCustomer(obj);
-  const content = await getCustomer(customerId);
-
-  reduceBalance(obj.transactionAmount,content);
-  updateRow(content);
-  closeModal("modalWithdraw");
-  showSuccessToast("Rút tiền thành công");
-});
-
-btnBan.addEventListener("click", async() => {
-  const deleted = 1
-  const obj = {
-    deleted
-  }
-  const content = await fetchUpdateCustomer(customerId, obj);
-
-  closeModal("modalBan");
-  removeRow(content);
-  
-  showSuccessToast("Xóa thành công");
-
-
-})
-
-function showSuccessToast(message) {
-  toastBody.innerText = message;
-  toastBootstrap.show();
+  loading.removeClass('hide')
 
   setTimeout(() => {
-    btnCloseToast.click()
-  }, 1500);
+    $.ajax(
+      {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        },
+        method: 'POST',
+        url: "http://localhost:3300/customers",
+        data: JSON.stringify(obj)
+      }
+    )
+      .done((data) => {
+        const str = renderCustomers(data)
+        bodyCustomer.prepend(str);
+
+        closeModal('modalCreate')
+
+        toastBody.text('Thêm mới thành công')
+        toastBootstrap.show()
+
+        setTimeout(() => {
+          btnCloseToast.click()
+        }, 1500);
+      })
+      .always(() => {
+        btnCreate.prop("disabled", false);
+        loading.addClass('hide')
+      });
+  }, 1000);
 }
 
-const fetchWithdrawCustomer = async(obj) => {
+btnWithdraw.on("click", async() => {
+  $("#frmWithdraw").trigger("submit")
+})
 
-  const response = await fetch("http://localhost:3300/withdraws/", {
+btnDeposit.on("click", async () => {
+  $("#frmDeposit").trigger("submit")
+})
 
-  method: "POST",
-  headers: {
-    "Content-type": "application/json; charset=UTF-8"
-  },
-  body: JSON.stringify(obj)
-});
+btnUpdate.on("click", async () => {
+  $("#frmUpdate").trigger("submit")
+})
 
-const withdraw = await response.json();
-return withdraw;
+btnCreate.on('click', async () => {
+  $('#frmCreate').trigger('submit')
+})
 
-}
 
-const fetchDepositCustomer = async (obj) => {
 
-  const response = await fetch("http://localhost:3300/deposits/", {
-
-    method: "POST",
-    headers: {
-      "Content-type": "application/json; charset=UTF-8"
-    },
-    body: JSON.stringify(obj)
-  });
-
-  const deposit = await response.json();
-  return deposit;
-}
-
-const fetchUpdateCustomer = async (customerId, obj) => {
-  const response = await fetch("http://localhost:3300/customers/" + customerId, {
-    method: "PATCH",
-    headers: {
-      "Content-type": "application/json; charset=UTF-8"
-    },
-    body: JSON.stringify(obj)
-  });
-  const customer = await response.json();
-  return customer;
-}
-
-const fetchCreateCustomer = async (obj) => {
-
-  const response = await fetch("http://localhost:3300/customers", {
-
-    method: "POST",
-    headers: {
-      "Content-type": "application/json; charset=UTF-8"
-    },
-    body: JSON.stringify(obj)
-  });
-
-  const customer = await response.json();
-  return customer;
-};
-
-function incrementBalance(amount, obj){
-  obj.balance = obj.balance + parseFloat(amount)
-};
-
-function reduceBalance(amount, obj){
-  obj.balance = obj.balance - parseFloat(amount)
-};
-
-function updateRow(obj){
-  const updateRow = document.getElementById("tr_" + obj.id);
-  const str = renderCustomers(obj);
-  updateRow.innerHTML = str;
-}
-
-function removeRow(obj){
-  const removeRow = document.getElementById("tr_" + obj.id);
-  removeRow.remove();
-}
 
 function openModal(elm) {
-  let el = document.getElementById(elm);
-  new bootstrap.Modal(el).show();
+  let el = $("#" + elm);
+  el.modal("show");
 }
 
 function closeModal(elem) {
-  document.getElementById(elem).style.display = "none"
-  document.getElementById(elem).classList.remove("show")
-  document.querySelector('.modal-backdrop').remove();
-  document.querySelector('body').setAttribute('style', 'overflow: none')
+  let el = $("#" + elem);
+  el.modal("hide");
+}
+
+function attachEventHandle() {
+  const btnEditElems = $(".edit");
+  const btnDepositElems = $(".deposit");
+  const btnWithdrawElems = $(".withdraw");
+  const btnBanElems = $(".ban");
+  const btnTransferElems = $(".transfer");
+
+  btnEditElems.off("click")
+  btnDepositElems.off("click")
+  btnWithdrawElems.off("click")
+  btnBanElems.off("click")
+  btnTransferElems.off("click")
+
+  btnEditElems.each((index, item) => {
+
+    $(item).on("click", async () => {
+
+      // const customerId = item.getAttribute("data-id");
+      customerId = $(item).data("id");
+      customer = await getCustomer(customerId);
+      openModal("modalUpdate");
+
+      $("#fullNameUp").val(customer.fullName);
+      $("#emailUp").val(customer.email);
+      $("#phoneUp").val(customer.phone);
+      $("#addressUp").val(customer.address);
+    });
+  });
+
+  btnDepositElems.each((index, item) => {
+
+    $(item).on("click", async () => {
+
+      customerId = $(item).data("id");
+
+      customer = await getCustomer(customerId);
+
+      openModal("modalDeposit");
+
+      $("#idDepo").val(customer.id);
+      $("#fullNameDepo").val(customer.fullName);
+      $("#balanceDepo").val(customer.balance);
+    });
+  });
+
+  btnWithdrawElems.each((index, item) => {
+
+    $(item).on("click", async () => {
+
+      customerId = $(item).data("id");
+      customer = await getCustomer(customerId);
+      openModal("modalWithdraw");
+
+      $("#idWi").val(customer.id);
+      $("#fullNameWi").val(customer.fullName);
+      $("#balanceWi").val(customer.balance);
+    });
+  });
+
+  btnBanElems.each((index, item) => {
+
+    $(item).on("click", async () => {
+
+      customerId = $(item).data("id");
+      customer = await getCustomer(customerId);
+      openModal("modalBan");
+
+      $("#fullNameBan").val(customer.fullName);
+      $("#emailBan").val(customer.email);
+      $("#phoneBan").val(customer.phone);
+      $("#addressBan").val(customer.address);
+    });
+  });
+
+  btnTransferElems.each((index, item) => {
+
+    $(item).on("click", async () => {
+
+      customerId = $(item).data("id");
+      const sender = await getCustomer(customerId);
+      const recipients = await getRecipients(customerId);
+      openModal("modalTransfer");
+
+      $("#idSen").val(sender.id);
+      $("#fullNameSe").val(sender.fullName);
+      $("#emailSe").val(sender.email);
+      $("#balanceSe").val(sender.balance);
+
+      recipients.each((index, recipient) => {
+
+        const option = $("<option></option>");
+        option.val(recipient.id);
+        option.text(recipient.fullName);
+        $("#reciptentSelect").append(option);
+      });
+    });
+  });
 }
 
 

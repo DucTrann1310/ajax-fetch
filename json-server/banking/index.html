@@ -3,11 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
+    <title>Banking</title>
     <link rel="stylesheet" href="assets/bootstrap/v5.3.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.3/css/all.css">
     <link rel="stylesheet" href="assets/css/custom-style.css">
+    <link rel="stylesheet" href="assets/css/loading.css">
+    <script src="assets/jquery/jquery-3.7.1.min.js"></script>
+    <script src="assets/jquery/jquery.validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <title>Banking</title>
 </head>
 
 <body>
@@ -60,6 +63,15 @@
             </div>
         </div>
 
+        <div id="loading" class="sk-chase hide">
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+            <div class="sk-chase-dot"></div>
+        </div>
+
 
         <!-- Modal Create -->
         <div class="modal fade" id="modalCreate" tabindex="-1" aria-hidden="true">
@@ -70,39 +82,39 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form method="post">
+                        <form method="post" id="frmCreate">
                             <div class="row mb-3 mt-3">
                                 <div class="col-lg-6">
                                     <label for="fullNameCre" class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" id="fullNameCre">
+                                    <input type="text" class="form-control" id="fullNameCre" name="fullNameCre">
                                 </div>
                                 <div class="col-lg-6">
                                     <label for="emailCre" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="emailCre">
+                                    <input type="email" class="form-control" id="emailCre" name="emailCre">
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-lg-6">
                                     <label for="phoneCre" class="form-label">Phone</label>
-                                    <input type="tel" class="form-control" id="phoneCre">
+                                    <input type="tel" class="form-control" id="phoneCre" name="phoneCre">
                                 </div>
                                 <div class="col-lg-6">
                                     <label for="addressCre" class="form-label">Address</label>
-                                    <input type="text" class="form-control" id="addressCre">
+                                    <input type="text" class="form-control" id="addressCre" name="addressCre">
                                 </div>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-outline-success" id="btnCreate">
+                        <button type="submit" class="btn btn-outline-success" id="btnCreate">
                             <i class="fas fa-plus"></i>
                             Create
                         </button>
                     </div>
                 </div>
             </div>
-        </div>
+        </div> 
 
         <!-- Modal Update -->
         <div class="modal fade" id="modalUpdate" tabindex="-1" aria-hidden="true">
@@ -113,25 +125,25 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form method="post">
+                        <form method="post" id="frmUpdate">
                             <div class="row mb-3 mt-3">
                                 <div class="col-lg-6">
                                     <label for="fullNameUp" class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" id="fullNameUp">
+                                    <input type="text" class="form-control" id="fullNameUp" name="fullNameUp">
                                 </div>
                                 <div class="col-lg-6">
                                     <label for="emailUp" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="emailUp">
+                                    <input type="email" class="form-control" id="emailUp" name="emailUp">
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-lg-6">
                                     <label for="phoneUp" class="form-label">Phone</label>
-                                    <input type="tel" class="form-control" id="phoneUp">
+                                    <input type="tel" class="form-control" id="phoneUp" name="phoneUp">
                                 </div>
                                 <div class="col-lg-6">
                                     <label for="addressUp" class="form-label">Address</label>
-                                    <input type="text" class="form-control" id="addressUp">
+                                    <input type="text" class="form-control" id="addressUp" name="addressUp">
                                 </div>
                             </div>
                         </form>
@@ -156,25 +168,25 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form method="post">
+                        <form method="post" id="frmDeposit">
                             <div class="row mb-3 mt-3">
                                 <div class="col-lg-6">
                                     <label for="idDepo" class="form-label">Customer Id</label>
-                                    <input type="text" class="form-control" id="idDepo" readonly>
+                                    <input type="text" class="form-control" id="idDepo" name="idDepo" readonly>
                                 </div>
                                 <div class="col-lg-6">
                                     <label for="fullNameDepo" class="form-label">Full Name</label>
-                                    <input type="email" class="form-control" id="fullNameDepo" readonly>
+                                    <input type="text" class="form-control" id="fullNameDepo" name="fullNameDepo" readonly>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-lg-6">
                                     <label for="balanceDepo" class="form-label">Current Balance ($)</label>
-                                    <input type="tel" class="form-control" id="balanceDepo" readonly>
+                                    <input type="tel" class="form-control" id="balanceDepo" name="balanceDepo" readonly>
                                 </div>
                                 <div class="col-lg-6">
                                     <label for="transactionDepo" class="form-label">Transaction Amount ($)</label>
-                                    <input type="number" class="form-control" id="transactionDepo">
+                                    <input type="text" class="form-control" id="transactionDepo" name="transactionDepo">
                                 </div>
                             </div>
                         </form>
@@ -199,7 +211,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form method="post">
+                        <form method="post" id="frmWithdraw">
                             <div class="row mb-3 mt-3">
                                 <div class="col-lg-6">
                                     <label for="idWi" class="form-label">Customer Id</label>
@@ -207,17 +219,17 @@
                                 </div>
                                 <div class="col-lg-6">
                                     <label for="fullNameWi" class="form-label">Full Name</label>
-                                    <input type="email" class="form-control" id="fullNameWi" readonly>
+                                    <input type="text" class="form-control" id="fullNameWi" readonly>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-lg-6">
                                     <label for="balanceWi" class="form-label">Current Balance ($)</label>
-                                    <input type="tel" class="form-control" id="balanceWi" readonly>
+                                    <input type="tel" class="form-control" id="balanceWi" name="balanceWi" readonly>
                                 </div>
                                 <div class="col-lg-6">
                                     <label for="transactionWi" class="form-label">Transaction Amount ($)</label>
-                                    <input type="number" class="form-control" id="transactionWi">
+                                    <input type="text" class="form-control" id="transactionWi" name="transactionWi">
                                 </div>
                             </div>
                         </form>
@@ -306,21 +318,21 @@
                             <div class="row mb-3 mt-3">
                                 <div class="col-lg-6">
                                     <label for="fullNameBan" class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" id="fullNameBan">
+                                    <input type="text" class="form-control" id="fullNameBan" readonly>
                                 </div>
                                 <div class="col-lg-6">
                                     <label for="emailBan" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="emailBan">
+                                    <input type="email" class="form-control" id="emailBan" readonly>
                                 </div>
                             </div>
                             <div class="row mb-3">
                                 <div class="col-lg-6">
                                     <label for="phoneBan" class="form-label">Phone</label>
-                                    <input type="tel" class="form-control" id="phoneBan">
+                                    <input type="tel" class="form-control" id="phoneBan" readonly>
                                 </div>
                                 <div class="col-lg-6">
                                     <label for="addressBan" class="form-label">Address</label>
-                                    <input type="text" class="form-control" id="addressBan">
+                                    <input type="text" class="form-control" id="addressBan" readonly>
                                 </div>
                             </div>
                         </form>
