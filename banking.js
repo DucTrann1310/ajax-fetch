@@ -50,7 +50,7 @@ const getCustomer = async (customerId) => {
 
 const getRecipients = async (customerId) => {
   const customers = await fetchAllPerson();
-  
+
   const reciptents = customers.filter((reciptent) => {
     return reciptent.id !== customerId && reciptent.deleted === 0;
   });
@@ -114,6 +114,12 @@ const renderCustomers = (obj) => {
 `;
 };
 
+$("#modalTransfer").on('hidden.bs.modal', () => {
+  $("#frmTransfer").trigger("reset")
+  $("#frmTransfer input").removeClass("error")
+  $("#frmTransfer label.error").remove()
+});
+
 
 $("#modalWithdraw").on('hidden.bs.modal', () => {
   $("#frmWithdraw").trigger("reset")
@@ -140,6 +146,32 @@ $('#modalCreate').on('hidden.bs.modal', () => {
 });
 
 
+
+$("#frmTransfer").validate({
+  rules: {
+    transferAmount: {
+      required: true,
+      number: true,
+      min: 1
+    },
+    transactionAmount: {
+      max: parseFloat($("#balanceSe").val())
+    }
+  },
+  message: {
+    transferAmount: {
+      required: "Vui lòng nhập tiền chuyển khoản",
+      number: "Tiền chuyển khoản phải là số",
+      min: "Tiền chuyển khoản tối thiểu là 1"
+    },
+    transactionAmount: {
+      max: "Tổng tiền chuyển khoản không được lớn hơn số tiền hiện có"
+    }
+  },
+  submitHandler: () => {
+    transferCustomer()
+  }
+})
 
 $("#frmWithdraw").validate({
   rules: {
@@ -281,6 +313,10 @@ getAllCustomers();
 
 
 
+
+const transferCustomer = async () => {
+
+}
 
 btnBan.on("click", async () => {
 
@@ -671,12 +707,21 @@ function attachEventHandle() {
       $("#emailSe").val(sender.email);
       $("#balanceSe").val(sender.balance);
 
-      recipients.each((index, recipient) => {
+      // recipients.each((index, recipient) => {
 
-        const option = $("<option></option>");
-        option.val(recipient.id);
-        option.text(recipient.fullName);
-        $("#reciptentSelect").append(option);
+      //   const option = $("<option></option>");
+      //   option.val(recipient.id);
+      //   option.text(recipient.fullName);
+      //   $("#reciptentSelect").append(option);
+
+      const idRe = $("#idRe");
+      idRe.empty();
+
+      recipients.forEach((recipient) => {
+        const option = $("<option></option>")
+          .attr("value", recipient.id)
+          .text(`(${recipient.id}) ` + recipient.fullName);
+        idRe.append(option);
       });
     });
   });
