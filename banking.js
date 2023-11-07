@@ -15,9 +15,6 @@ const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLive)
 
 let customerId = 0;
 async function fetchAllPerson() {
-  // const response = await fetch("http://localhost:3300/customers");
-  // const customers = await response.json();
-  // return customers;
 
   return await $.ajax({
     url: "http://localhost:3300/customers"
@@ -276,14 +273,50 @@ getAllCustomers();
 
 
 
-const banCustomer = async () => {
+btnBan.on("click", async () => {
+
   const customer = await getCustomer(customerId);
   customer.deleted = 1;
 
   const obj = {
-    
+    customer
   }
-}
+
+  btnBan.prop("disable", true);
+  loading.removeClass("hide");
+
+  setTimeout(() => {
+    $.ajax(
+      {
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        },
+        url: "http://localhost:3300/customers/" + customerId,
+        method: "PATCH",
+        data: JSON.stringify(customer)
+      }
+    )
+      .done((data) => {
+        const str = renderCustomers(data)
+        const updateRow = $("#tr_" + customerId);
+        updateRow.remove();
+
+        closeModal("modalBan")
+        attachEventHandle();
+
+        toastBody.text('Xóa thành công')
+        toastBootstrap.show()
+
+        setTimeout(() => {
+          btnCloseToast.click
+        }, 1500);
+      })
+      .always(() => {
+        btnUpdate.prop("disable", false)
+        loading.addClass("hide")
+      })
+  }, 1000);
+})
 
 const withdrawCustomer = async () => {
   const customer = await getCustomer(customerId);
@@ -308,40 +341,40 @@ const withdrawCustomer = async () => {
         data: JSON.stringify(obj)
       }
     )
-    .done(() => {
-      customer.balance = customer.balance - parseFloat(obj.transactionAmount);
+      .done(() => {
+        customer.balance = customer.balance - parseFloat(obj.transactionAmount);
 
-      $.ajax(
-        {
-          headers: {
-            "Content-type": "application/json; charset=UTF-8"
-          },
-          url: "http://localhost:3300/customers/" + customerId,
-          method: "PATCH",
-          data: JSON.stringify(customer)
-        }
-      )
-      .done((data) => {
-        const str = renderCustomers(data);
-        const updateRow = $("#tr_" + customerId);
-        updateRow.replaceWith(str);
-        attachEventHandle()
+        $.ajax(
+          {
+            headers: {
+              "Content-type": "application/json; charset=UTF-8"
+            },
+            url: "http://localhost:3300/customers/" + customerId,
+            method: "PATCH",
+            data: JSON.stringify(customer)
+          }
+        )
+          .done((data) => {
+            const str = renderCustomers(data);
+            const updateRow = $("#tr_" + customerId);
+            updateRow.replaceWith(str);
+            attachEventHandle()
+          })
+
+        closeModal("modalWithdraw")
+
+        toastBody.text('Rút tiền thành công')
+        toastBootstrap.show()
+
+        setTimeout(() => {
+          btnCloseToast.click
+        }, 1500);
       })
+      .always(() => {
+        btnWithdraw.prop("disable", false)
+        loading.addClass("hide")
 
-      closeModal("modalWithdraw")
-
-      toastBody.text('Rút tiền thành công')
-      toastBootstrap.show()
-
-      setTimeout(() => {
-        btnCloseToast.click
-      }, 1500);
-    })
-    .always(() => {
-      btnWithdraw.prop("disable", false)
-      loading.addClass("hide")
-      
-    })
+      })
   }, 1000);
 }
 
@@ -388,7 +421,7 @@ const depositCustomer = async () => {
         })
 
       closeModal("modalDeposit");
-      
+
 
       toastBody.text('Nạp tiền thành công')
       toastBootstrap.show()
@@ -398,12 +431,12 @@ const depositCustomer = async () => {
       }, 1500);
 
 
-      
+
     })
       .always(() => {
         btnDeposit.prop("disable", false)
         loading.addClass("hide")
-        
+
       })
   }, 1000);
 }
@@ -460,7 +493,7 @@ const updateCustomer = () => {
   }, 1000);
 }
 
-const createCustomer = () => {  
+const createCustomer = () => {
   const fullName = $('#fullNameCre').val()
   const email = $('#emailCre').val()
   const phone = $('#phoneCre').val()
@@ -497,6 +530,7 @@ const createCustomer = () => {
         bodyCustomer.prepend(str);
 
         closeModal('modalCreate')
+        attachEventHandle();
 
         toastBody.text('Thêm mới thành công')
         toastBootstrap.show()
@@ -512,7 +546,7 @@ const createCustomer = () => {
   }, 1000);
 }
 
-btnWithdraw.on("click", async() => {
+btnWithdraw.on("click", async () => {
   $("#frmWithdraw").trigger("submit")
 })
 
